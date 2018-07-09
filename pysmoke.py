@@ -11,6 +11,7 @@ import threading
 import time
 from Queue import Queue
 from influxdb import InfluxDBClient
+from apscheduler.schedulers.background import BackgroundScheduler
 
 OS = os.name
 
@@ -142,4 +143,9 @@ def main():
     queue.join()
 
 if __name__ == '__main__':
-    main()
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(main, 'interval', seconds=30, max_instances=2, id='pysmoke')
+    scheduler.start()
+    while True:
+        time.sleep(2)
+
